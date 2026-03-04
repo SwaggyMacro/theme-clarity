@@ -613,11 +613,18 @@ spec:
               min: 0
               max: 30
               help: 设为 0 则不自动切换
+            - $formkit: number
+              name: display_count
+              label: 显示数量
+              value: 6
+              min: 1
+              max: 20
+              help: 前端最多显示的轮播项数量，超出部分不会渲染
             - $formkit: array
               name: items
               label: 轮播项
               value: []
-              help: 前端最多显示 6 个轮播项
+              help: 显示数量由「显示数量」配置项控制
               itemLabels:
                 - type: image
                   label: $value.image
