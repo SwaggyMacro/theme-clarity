@@ -31,7 +31,7 @@ export const reinitializeComponents = () => {
   initDropdownMenus();
   initActiveNavItem();
   initLinkSubmit();
-  if (window.themeConfig?.custom?.enable_fancybox === true) {
+  if (window.themeConfig?.custom?.enable_fancybox !== true) {
     initFancybox();
   }
   mountCustomElements();
