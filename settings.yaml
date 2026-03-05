@@ -649,6 +649,11 @@ spec:
     - group: post
       label: 文章
       formSchema:
+        - $formkit: switch
+          name: enable_toolbar
+          label: 关闭分类栏
+          value: false
+          help: 开启后将关闭分类栏
         - $formkit: group
           name: homepage
           label: 首页顶部小组件
