@@ -37,11 +37,11 @@
   </div>
 
   <div x-show="ready && showMenu" x-cloak x-transition class="user-menu">
-    <a href="/uc" class="user-menu-item">
+    <a href="/uc" class="user-menu-item" data-no-pjax>
       <span class="icon-[ph--user-bold]"></span>
       <span>个人中心</span>
     </a>
-    <a sec:authorize="hasRole('super-role')" href="/console" class="user-menu-item">
+    <a sec:authorize="hasRole('super-role')" href="/console" class="user-menu-item" data-no-pjax>
       <span class="icon-[ph--gear-six-bold]"></span>
       <span>管理中心</span>
     </a>
