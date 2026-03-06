@@ -1,9 +1,14 @@
-<th:block th:fragment="content">
+<th:block th:fragment="content" th:with="momentsTotal=${momentFinder.list({size: 1})}">
   <div th:if="${not #lists.isEmpty(tags)}" class="moments-tags-wrapper">
     <nav class="moments-tags scrollcheck-x">
       <a th:href="@{/moments}" class="tag-item" th:classappend="${#lists.isEmpty(param.tag)} ? 'active' : ''">
         全部
-        <span class="tag-count" th:text="${moments.total}"></span>
+        <span
+          class="tag-count"
+          th:if="${momentsTotal != null && momentsTotal.total > 0}"
+          th:text="${momentsTotal.total}"
+          >0</span
+        >
       </a>
       <a
         th:each="tag : ${tags}"
