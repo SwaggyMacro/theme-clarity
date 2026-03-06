@@ -31,6 +31,7 @@ export default ({ mode }: { mode: string }) => {
     moments: path.resolve(__dirname, "src/styles/moments/main.scss"),
     links: path.resolve(__dirname, "src/styles/links/main.scss"),
     friends: path.resolve(__dirname, "src/styles/friends/main.scss"),
+    bangumis: path.resolve(__dirname, "src/styles/bangumis/main.scss"),
     ...getAuthEntries(),
   };
 

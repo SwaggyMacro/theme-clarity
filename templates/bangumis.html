@@ -3,6 +3,13 @@
   xmlns:th="https://www.thymeleaf.org"
   th:replace="~{modules/layout :: html(content = ~{::content}, showAside = true, pageTitle = '追番', head = ~{::head})}"
 >
+  <th:block th:fragment="head">
+    <link
+      rel="stylesheet"
+      data-pjax-conditional="bangumis"
+      th:href="@{/assets/dist/bangumis.css?v={version}(version=${theme.spec.version})}"
+    />
+  </th:block>
   <div th:fragment="content">
     <div class="bangumi-header">
       <div class="bangumi-title">
