@@ -325,9 +325,7 @@ function initFloatingPagination() {
     floatingPaginationCleanup = null;
   }
 
-  const paginations = Array.from(
-    document.querySelectorAll<HTMLElement>(".pagination-wrapper.sticky-pagination"),
-  );
+  const paginations = Array.from(document.querySelectorAll<HTMLElement>(".pagination-wrapper.sticky-pagination"));
   if (!paginations.length) return;
 
   const cleanups: Array<() => void> = [];
@@ -342,7 +340,10 @@ function initFloatingPagination() {
 
     const updateCollapsedWidth = () => {
       const pageUnits = pagination.querySelectorAll(".pagination-num").length;
-      const collapsedWidth = pageUnits * 2 + 6;
+      const hasJump = pagination.querySelector(".pagination-jump") !== null;
+      const baseWidth = pageUnits * 2 + 6;
+      const jumpWidth = hasJump ? 10 : 0;
+      const collapsedWidth = baseWidth + jumpWidth;
       pagination.style.setProperty("--collapsed-width", `${collapsedWidth}em`);
     };
 

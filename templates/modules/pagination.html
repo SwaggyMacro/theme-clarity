@@ -17,7 +17,13 @@
     >
       <span class="icon-[ph--arrow-fat-left-duotone]"></span>
     </a>
-    <button th:unless="${data.hasPrevious}" class="button pagination-button rtl-flip" type="button" aria-label="上一页" disabled>
+    <button
+      th:unless="${data.hasPrevious}"
+      class="button pagination-button rtl-flip"
+      type="button"
+      aria-label="上一页"
+      disabled
+    >
       <span class="icon-[ph--arrow-fat-left-duotone]"></span>
     </button>
 
@@ -73,7 +79,14 @@
       onclick="goToPageNumber(this)"
     ></button>
 
-    <button th:if="${data.page < data.totalPages - 3}" class="pagination-num pagination-ellipsis" type="button" disabled>…</button>
+    <button
+      th:if="${data.page < data.totalPages - 3}"
+      class="pagination-num pagination-ellipsis"
+      type="button"
+      disabled
+    >
+      …
+    </button>
     <button
       th:if="${data.page < data.totalPages - 2}"
       class="pagination-num"
@@ -86,9 +99,32 @@
     <a th:if="${data.hasNext}" th:href="${data.nextUrl}" class="button pagination-button rtl-flip" aria-label="下一页">
       <span class="icon-[ph--arrow-fat-right-duotone]"></span>
     </a>
-    <button th:unless="${data.hasNext}" class="button pagination-button rtl-flip" type="button" aria-label="下一页" disabled>
+    <button
+      th:unless="${data.hasNext}"
+      class="button pagination-button rtl-flip"
+      type="button"
+      aria-label="下一页"
+      disabled
+    >
       <span class="icon-[ph--arrow-fat-right-duotone]"></span>
     </button>
+    <!-- 分页跳转 start -->
+    <div th:if="${theme.config.custom.enable_page_jump}" class="pagination-jump">
+      <input
+        type="number"
+        id="pagination-jump-input"
+        class="pagination-jump-input"
+        min="1"
+        th:max="${data.totalPages}"
+        th:attr="data-total-pages=${data.totalPages}"
+        placeholder="页码"
+        aria-label="输入页码"
+      />
+      <button type="button" class="pagination-jump-btn" aria-label="跳转到指定页" title="跳转">
+        <span class="icon-[ph--paper-plane-tilt]"></span>
+      </button>
+    </div>
+    <!-- 分页跳转 end -->
   </nav>
   <div th:if="${data.totalPages > 1}" class="pagination-anchor" aria-hidden="true"></div>
 </th:block>

@@ -52,3 +52,4 @@ $breakpoint-widescreen: 1080px;
 @use "./scss/components/pjax";
 // 内容自定义组件（Alert, Badge, Folding, Timeline, Chat 等）
 @use "./scss/components/content-components";
+@use "./scss/pagination";

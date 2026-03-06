@@ -1,5 +1,6 @@
 import type Alpine from "alpinejs";
 import { getPjaxInstance } from "../pjax/pjax";
+import { showToast } from "../utils/toast";
 
 function navigateWithPjax(url: string) {
   const pjax = getPjaxInstance();
@@ -121,3 +122,78 @@ function initKeyboardNavigation() {
 }
 
 initKeyboardNavigation();
+
+//== 分页跳转功能 ==//
+function initPaginationJump() {
+  function updateJumpBtnTitle(input: HTMLInputElement) {
+    const paginationWrapper = input.closest(".pagination-wrapper");
+    if (!paginationWrapper) return;
+
+    const jumpBtn = paginationWrapper.querySelector(".pagination-jump-btn") as HTMLElement | null;
+    if (!jumpBtn) return;
+
+    const value = input.value.trim();
+    const pageNum = parseInt(value, 10);
+
+    if (value === "" || isNaN(pageNum) || pageNum < 1) {
+      jumpBtn.title = "跳转";
+    } else {
+      jumpBtn.title = `跳转到第 ${pageNum} 页`;
+    }
+  }
+
+  document.addEventListener("click", (e: MouseEvent) => {
+    const target = e.target as HTMLElement;
+    const jumpBtn = target.closest(".pagination-jump-btn") as HTMLElement | null;
+    if (!jumpBtn) return;
+
+    const paginationWrapper = jumpBtn.closest(".pagination-wrapper");
+    if (!paginationWrapper) return;
+
+    const input = paginationWrapper.querySelector(".pagination-jump-input") as HTMLInputElement | null;
+    if (!input) return;
+
+    const targetPage = parseInt(input.value, 10);
+    const currentPage = parseInt(paginationWrapper.getAttribute("data-current-page") || "1", 10);
+    const totalPages = parseInt(
+      paginationWrapper.getAttribute("data-total-pages") || input.dataset.totalPages || "1",
+      10,
+    );
+
+    if (isNaN(targetPage) || targetPage < 1 || targetPage > totalPages || targetPage === currentPage) {
+      if (isNaN(targetPage) || targetPage < 1 || targetPage > totalPages) {
+        showToast(`请输入有效的页码 (1-${totalPages})`, "warning");
+      }
+      input.value = "";
+      updateJumpBtnTitle(input);
+      return;
+    }
+
+    navigateWithPjax(buildPageUrl(targetPage));
+  });
+
+  document.addEventListener("keydown", (e: KeyboardEvent) => {
+    const target = e.target as HTMLElement;
+    if (!target.classList.contains("pagination-jump-input")) return;
+
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const paginationWrapper = target.closest(".pagination-wrapper");
+      if (!paginationWrapper) return;
+
+      const jumpBtn = paginationWrapper.querySelector(".pagination-jump-btn") as HTMLElement | null;
+      if (jumpBtn) {
+        jumpBtn.click();
+      }
+    }
+  });
+
+  document.addEventListener("input", (e: Event) => {
+    const target = e.target as HTMLElement;
+    if (!target.classList.contains("pagination-jump-input")) return;
+    updateJumpBtnTitle(target as HTMLInputElement);
+  });
+}
+
+initPaginationJump();
+//== 分页跳转功能 end ==//

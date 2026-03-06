@@ -649,6 +649,11 @@ spec:
     - group: post
       label: 文章
       formSchema:
+        - $formkit: switch
+          name: enable_toolbar
+          label: 关闭分类栏
+          value: false
+          help: 开启后将关闭分类栏
         - $formkit: group
           name: homepage
           label: 首页顶部小组件
@@ -1039,6 +1044,13 @@ spec:
           label: 启用 PJAX
           value: false
           help: 开启后页面切换将使用 PJAX 技术，提升用户体验。注意：某些插件可能不兼容 PJAX ，使用 PJAX 需要舍弃一些功能。
+        - $formkit: switch
+          onValue: true
+          offValue: false
+          name: enable_page_jump
+          label: 启用分页跳转
+          value: false
+          help: 开启后分页将显示跳转功能
     - group: development
       label: 开发设置
       formSchema:
