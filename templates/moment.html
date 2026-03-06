@@ -3,6 +3,14 @@
   xmlns:th="https://www.thymeleaf.org"
   th:replace="~{modules/layout :: html(content = ~{::content}, showAside = true , pageTitle = (${theme.config.plugins?.moments?.moment_title} ?: '瞬间详情'), head = ~{::head})}"
 >
+  <th:block th:fragment="head">
+    <link
+      rel="stylesheet"
+      th:if="${pluginFinder.available('PluginMoments')}"
+      data-pjax-conditional="moment"
+      th:href="@{/assets/dist/moments.css?v={version}(version=${theme.spec.version})}"
+    />
+  </th:block>
   <th:block th:fragment="content">
     <div class="moment-back">
       <a href="/moments" class="back-link">
