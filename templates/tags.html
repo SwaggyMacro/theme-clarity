@@ -1,5 +1,8 @@
 <!doctype html>
-<html xmlns:th="https://www.thymeleaf.org" th:replace="~{modules/layout :: html(content = ~{::content}, showAside = true, pageTitle = '标签云')}">
+<html
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{modules/layout :: html(content = ~{::content}, showAside = true, pageTitle = '标签云', head = ~{::head})}"
+>
   <th:block th:fragment="content">
     <div class="tags-archive proper-height">
       <header class="tags-header">
@@ -7,17 +10,17 @@
           <span class="icon-[ph--tag-bold]"></span>
           <span>标签云</span>
         </h1>
-        <p class="tags-count">
-          共 <strong th:text="${#lists.size(tags)}">0</strong> 个标签
-        </p>
+        <p class="tags-count">共 <strong th:text="${#lists.size(tags)}">0</strong> 个标签</p>
       </header>
 
       <div class="tags-cloud">
-        <a th:each="tag,tagStat : ${tags}" 
-           th:href="${tag.status.permalink}" 
-           class="tag-item"
-           th:style="'--delay: ' + ${tagStat.index * 0.02} + 's'"
-           th:title="${tag.spec.displayName} + ' (' + ${tag.postCount} + ' 篇文章)'">
+        <a
+          th:each="tag,tagStat : ${tags}"
+          th:href="${tag.status.permalink}"
+          class="tag-item"
+          th:style="'--delay: ' + ${tagStat.index * 0.02} + 's'"
+          th:title="${tag.spec.displayName} + ' (' + ${tag.postCount} + ' 篇文章)'"
+        >
           <span class="tag-name">#<span th:text="${tag.spec.displayName}"></span></span>
           <span class="tag-count" th:text="${tag.postCount}"></span>
         </a>

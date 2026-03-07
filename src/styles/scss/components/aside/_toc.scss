@@ -97,31 +97,6 @@
 				border-left: 1px solid color-mix(in srgb, var(--c-border), transparent 20%);
 			}
 		}
-
-		// 根据标题等级补充缩进，增强层级感
-		li[data-level="1"] > a {
-			padding-left: 0.65rem;
-		}
-
-		li[data-level="2"] > a {
-			padding-left: 1.4rem;
-		}
-
-		li[data-level="3"] > a {
-			padding-left: 2.2rem;
-		}
-
-		li[data-level="4"] > a {
-			padding-left: 3rem;
-		}
-
-		li[data-level="5"] > a {
-			padding-left: 3.8rem;
-		}
-
-		li[data-level="6"] > a {
-			padding-left: 4.6rem;
-		}
 	}
 
 	.no-toc {

@@ -28,6 +28,11 @@ export default ({ mode }: { mode: string }) => {
   const entries = {
     main: path.resolve(__dirname, "src/main.ts"),
     shop: path.resolve(__dirname, "src/styles/shop/main.scss"),
+    moments: path.resolve(__dirname, "src/styles/moments/main.scss"),
+    links: path.resolve(__dirname, "src/styles/links/main.scss"),
+    friends: path.resolve(__dirname, "src/styles/friends/main.scss"),
+    bangumis: path.resolve(__dirname, "src/styles/bangumis/main.scss"),
+    photos: path.resolve(__dirname, "src/styles/photos/main.scss"),
     ...getAuthEntries(),
   };
 

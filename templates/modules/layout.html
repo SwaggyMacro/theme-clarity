@@ -1,12 +1,16 @@
 <!doctype html>
 <html
   lang="zh-CN"
-  th:fragment="html (content, showAside, pageTitle)"
+  th:fragment="html (content, showAside, pageTitle, head)"
   th:data-page-transition="${theme.config.style.page_transition ?: 'fade-scale'}"
   th:data-nav-active="${theme.config.style.nav_active_indicator != false}"
 >
   <head>
     <th:block th:replace="~{modules/seo :: seo(pageTitle=${pageTitle})}" />
+
+    <th:block th:if="${head} != null">
+      <th:block th:replace="${head}" />
+    </th:block>
 
     <th:block th:if="${theme.config.custom.preconnect_urls != null and !theme.config.custom.preconnect_urls.isEmpty()}">
       <th:block th:each="item : ${theme.config.custom.preconnect_urls}">

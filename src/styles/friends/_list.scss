@@ -1,0 +1,17 @@
+// ========================================
+// 朋友圈列表布局 (Friends List Layout)
+// ========================================
+
+@use 'variables' as *;
+
+// 朋友圈列表 - 瀑布流双列布局
+.friends-list {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 0.75rem;
+	padding: 0.5rem $spacing-lg $spacing-lg;
+
+	@media (max-width: $breakpoint-mobile) {
+		grid-template-columns: 1fr;
+	}
+}

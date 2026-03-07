@@ -62,3 +62,33 @@ export const isPathMatch = (currentPath: string, href: string): boolean => {
 
   return false;
 };
+
+/**
+ * 获取条件资源的唯一键
+ * 用于 data-pjax-conditional 属性的资源标识
+ *
+ * @param el - link 或 script 元素
+ * @returns 资源的唯一键，如果没有 data-pjax-conditional 属性则返回 null
+ */
+export const getResourceKey = (el: Element): string | null => {
+  const conditionalValue = el.getAttribute("data-pjax-conditional");
+  if (!conditionalValue) return null;
+
+  const tagName = el.tagName.toLowerCase();
+  const rel = el.getAttribute("rel") || "";
+  const src = el.getAttribute("src") || "";
+  const href = el.getAttribute("href") || "";
+
+  // 使用 data-pjax-conditional 值作为基础键
+  // 结合标签类型和资源路径确保唯一性
+  if (tagName === "link" && rel === "stylesheet") {
+    return `css:${conditionalValue}:${href}`;
+  }
+
+  if (tagName === "script") {
+    return `js:${conditionalValue}:${src}`;
+  }
+
+  // 其他类型的资源
+  return `${tagName}:${conditionalValue}:${href || src}`;
+};

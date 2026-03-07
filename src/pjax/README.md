@@ -12,6 +12,7 @@
 - [开发指南](#开发指南)
 - [最佳实践](#最佳实践)
 - [故障排查](#故障排查)
+- [参考链接](#参考链接)
 
 ---
 
@@ -303,7 +304,75 @@ export const initMyComponent = () => {
 <meta name="description" content="页面描述" data-pjax="true">
 ```
 
-### 3. 检测 PJAX 是否启用
+### 3. 使用 data-pjax-conditional 条件加载资源
+
+对于只在特定页面需要的样式或脚本，使用 `data-pjax-conditional` 属性标记。系统会在进入页面时自动加载，离开页面时自动卸载。
+
+**使用场景**：
+- 特定页面独有的 CSS 样式（如相册页、追番页）
+- 特定页面需要的第三方库（如代码高亮、图表库）
+
+**基本用法**：
+
+```html
+<!-- 在模板 head 片段中添加条件样式 -->
+<th:block th:fragment="head">
+  <link
+    rel="stylesheet"
+    data-pjax-conditional="photos"
+    th:href="@{/assets/dist/photos.css}"
+  />
+</th:block>
+
+<!-- 条件加载脚本 -->
+<script data-pjax-conditional="mermaid" src="/assets/lib/mermaid.js"></script>
+```
+
+**属性说明**：
+
+| 属性 | 说明 |
+|------|------|
+| `data-pjax-conditional` | 资源的唯一标识，用于匹配和去重 |
+
+**工作原理**：
+
+1. **预加载**：在 `pjax:send` 事件时，系统会提前加载新页面需要的样式，防止闪烁
+2. **加载**：在 `pjax:success` 事件时，系统会加载新页面有而当前页面没有的资源
+3. **卸载**：当切换到不需要该资源的页面时，系统会自动移除对应的样式和脚本
+
+**注意事项**：
+
+- `data-pjax-conditional` 的值在同一类型资源（CSS/JS）中应保持唯一
+- 样式表必须设置 `rel="stylesheet"`
+- 脚本通过 `data-pjax-conditional` 加载时会重新创建并执行
+- 如果需要在脚本卸载前清理全局状态，可以监听 `pjax:script:cleanup` 事件
+
+**完整示例**：
+
+```html
+<!-- 相册页面模板 -->
+<html xmlns:th="http://www.thymeleaf.org">
+  <th:block th:fragment="head">
+    <!-- 只在相册页面加载的样式 -->
+    <link
+      rel="stylesheet"
+      data-pjax-conditional="photos"
+      th:href="@{/assets/dist/photos.css?v={version}(version=${theme.spec.version})}"
+    />
+    <!-- 只在相册页面加载的脚本 -->
+    <script
+      data-pjax-conditional="photos"
+      th:src="@{/assets/dist/photos.js}"
+    ></script>
+  </th:block>
+  
+  <div id="main-content">
+    <!-- 相册页面内容 -->
+  </div>
+</html>
+```
+
+### 4. 检测 PJAX 是否启用
 
 ```javascript
 if (window.themeConfig?.custom?.enable_pjax) {
@@ -313,7 +382,7 @@ if (window.themeConfig?.custom?.enable_pjax) {
 }
 ```
 
-### 4. 区分初始加载和 PJAX 加载
+### 5. 区分初始加载和 PJAX 加载
 
 ```javascript
 // 首次页面加载
@@ -327,7 +396,7 @@ document.addEventListener('pjax:success', () => {
 });
 ```
 
-### 5. 脚本执行注意事项
+### 6. 脚本执行注意事项
 
 PJAX 只更新配置的选择器内容（`#main-content`, `#z-aside`），因此：
 

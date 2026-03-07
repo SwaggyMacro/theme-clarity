@@ -1,4 +1,4 @@
-import { getMetaKey } from "./utils";
+import { getMetaKey, getResourceKey } from "./utils";
 
 // Meta 标签选择器列表
 const META_SELECTORS = [
@@ -34,6 +34,59 @@ const META_SELECTORS = [
   'link[rel="canonical"]',
 ];
 
+// 条件资源选择器（样式和脚本）
+const CONDITIONAL_RESOURCE_SELECTORS = ["link[data-pjax-conditional]", "script[data-pjax-conditional]"];
+
+// 条件样式选择器（仅样式，用于预加载）
+const CONDITIONAL_STYLE_SELECTOR = 'link[data-pjax-conditional][rel="stylesheet"]';
+
+/**
+ * 预加载条件样式
+ * 在 PJAX 请求发送后立即调用，提前加载新页面需要的样式，防止闪烁
+ *
+ * @param responseText - PJAX 请求的响应文本
+ * @returns Promise<void> - 样式加载完成的 Promise
+ */
+export const preloadConditionalStyles = async (responseText: string): Promise<void> => {
+  if (!responseText) return;
+
+  const parser = new DOMParser();
+  const newDoc = parser.parseFromString(responseText, "text/html");
+
+  const newStyles = newDoc.querySelectorAll(CONDITIONAL_STYLE_SELECTOR);
+  const loadPromises: Promise<void>[] = [];
+
+  newStyles.forEach((el) => {
+    const key = getResourceKey(el);
+    if (!key) return;
+
+    const existingSelector = `[data-pjax-conditional="${key}"]`;
+    if (document.querySelector(existingSelector)) {
+      return;
+    }
+
+    const href = el.getAttribute("href");
+    if (!href) return;
+
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.setAttribute("data-pjax-conditional", key);
+    link.setAttribute("data-pjax-preload", "true");
+    link.href = href;
+
+    const loadPromise = new Promise<void>((resolve) => {
+      link.onload = () => resolve();
+      link.onerror = () => resolve();
+      setTimeout(() => resolve(), 5000);
+    });
+
+    loadPromises.push(loadPromise);
+    document.head.appendChild(link);
+  });
+
+  await Promise.all(loadPromises);
+};
+
 /**
  * 更新页面的 meta 标签
  *
@@ -44,6 +97,7 @@ const META_SELECTORS = [
  * - 站点验证标签 (baidu-site-verification, google-site-verification, msvalidate.01)
  * - canonical link
  * - JSON-LD 结构化数据脚本
+ * - 条件资源 (带 data-pjax-conditional 属性的样式和脚本)
  *
  * @param request - PJAX 请求的 XMLHttpRequest 对象
  */
@@ -103,6 +157,87 @@ export const updateMetaTags = (request?: XMLHttpRequest) => {
   });
 
   updateJsonLdScripts(newDoc);
+  updateConditionalResources(newDoc);
+};
+
+/**
+ * 更新条件资源（样式和脚本）
+ *
+ * 处理带 data-pjax-conditional 属性的 link 和 script 标签
+ * 根据 data-pjax-conditional 的值来决定是否加载/卸载资源
+ *
+ * 使用方式：
+ * - 在模板中添加带 data-pjax-conditional 属性的资源标签
+ * - 属性值作为资源的唯一标识，用于匹配和去重
+ * - 例如: <link data-pjax-conditional="moments" rel="stylesheet" href="...">
+ *
+ * @param newDoc - 新页面的对象
+ */
+const updateConditionalResources = (newDoc: Document) => {
+  const newPageResourceKeys = new Set<string>();
+  const newPageResources = new Map<string, Element>();
+
+  CONDITIONAL_RESOURCE_SELECTORS.forEach((selector) => {
+    newDoc.querySelectorAll(selector).forEach((el) => {
+      const key = getResourceKey(el);
+      if (key) {
+        newPageResourceKeys.add(key);
+        newPageResources.set(key, el);
+      }
+    });
+  });
+
+  CONDITIONAL_RESOURCE_SELECTORS.forEach((selector) => {
+    document.querySelectorAll(selector).forEach((el) => {
+      const key = getResourceKey(el);
+      if (key && !newPageResourceKeys.has(key) && !el.hasAttribute("data-pjax-preload")) {
+        if (el.tagName.toLowerCase() === "script") {
+          cleanupScriptResource(el);
+        }
+        el.remove();
+      }
+    });
+  });
+
+  newPageResources.forEach((el, key) => {
+    const existingEl = document.querySelector(`[data-pjax-conditional="${key}"]`);
+
+    if (existingEl) {
+      if (existingEl.hasAttribute("data-pjax-preload")) {
+        existingEl.removeAttribute("data-pjax-preload");
+        existingEl.setAttribute("data-pjax", "true");
+      }
+      return;
+    }
+
+    // 克隆并添加资源
+    const clonedEl = el.cloneNode(true) as Element;
+    clonedEl.setAttribute("data-pjax", "true");
+
+    // 对于脚本，需要重新创建以确保执行
+    if (clonedEl.tagName.toLowerCase() === "script") {
+      const script = document.createElement("script");
+      Array.from(clonedEl.attributes).forEach((attr) => {
+        script.setAttribute(attr.name, attr.value);
+      });
+      script.textContent = clonedEl.textContent;
+      document.head.appendChild(script);
+    } else {
+      document.head.appendChild(clonedEl);
+    }
+  });
+};
+
+/**
+ * 清理脚本资源可能留下的全局状态
+ *
+ * @param el - 脚本元素
+ */
+const cleanupScriptResource = (el: Element) => {
+  const cleanupEvent = new CustomEvent("pjax:script:cleanup", {
+    detail: { src: el.getAttribute("src"), id: el.id },
+  });
+  document.dispatchEvent(cleanupEvent);
 };
 
 /**

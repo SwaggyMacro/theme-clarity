@@ -1,4 +1,5 @@
 import Pjax from "pjax";
+import { preloadConditionalStyles } from "./hooks/meta";
 
 let pjaxInstance: Pjax | null = null;
 
@@ -28,6 +29,22 @@ export const initPjax = () => {
     scrollRestoration: true,
     timeout: 5000,
   });
+
+  // 拦截 handleResponse 方法，在加载内容前预加载样式
+  if (pjaxInstance) {
+    const originalHandleResponse = pjaxInstance.handleResponse.bind(pjaxInstance);
+    pjaxInstance.handleResponse = (
+      requestText: string,
+      request: XMLHttpRequest,
+      href: string,
+      options?: Pjax.IOptions,
+    ) => {
+      // 预加载条件样式，等待完成后再继续
+      preloadConditionalStyles(requestText).then(() => {
+        originalHandleResponse(requestText, request, href, options);
+      });
+    };
+  }
 
   return pjaxInstance;
 };

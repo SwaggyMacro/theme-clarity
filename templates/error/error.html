@@ -1,5 +1,8 @@
 <!doctype html>
-<html xmlns:th="https://www.thymeleaf.org" th:replace="~{modules/layout :: html(content = ~{::content}, showAside = true, pageTitle = null)}">
+<html
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{modules/layout :: html(content = ~{::content}, showAside = true, pageTitle = null, head = ~{::head})}"
+>
   <th:block th:fragment="content">
     <div class="error-page proper-height">
       <th:block th:switch="${error.status}">
@@ -11,11 +14,12 @@
         <span th:case="503" class="error-icon icon-[solar--sleeping-circle-bold-duotone]"></span>
         <span th:case="*" class="error-icon icon-[solar--siren-rounded-bold-duotone]"></span>
       </th:block>
-      
+
       <div class="error-title">
-        [<span th:text="${error.status}">500</span>] <span th:text="${#strings.defaultString(error.title, '出错了')}">Internal Server Error</span>
+        [<span th:text="${error.status}">500</span>]
+        <span th:text="${#strings.defaultString(error.title, '出错了')}">Internal Server Error</span>
       </div>
-      
+
       <div class="error-hint">
         <th:block th:switch="${error.status}">
           <span th:case="404">页面走丢了，可能已被移除或链接有误</span>
@@ -29,14 +33,16 @@
           <span th:case="*">发生了一些意外情况</span>
         </th:block>
       </div>
-      
+
       <div th:if="${error.detail != null or error.instance != null}" class="error-codeblock">
         <div class="codeblock-header">
           <span class="codeblock-filename" th:text="${error.type ?: 'error'}">error</span>
         </div>
-        <pre class="codeblock-content"><code th:if="${error.detail}" th:text="${error.detail}"></code><code th:if="${error.instance}" th:text="${error.instance}"></code></pre>
+        <pre
+          class="codeblock-content"
+        ><code th:if="${error.detail}" th:text="${error.detail}"></code><code th:if="${error.instance}" th:text="${error.instance}"></code></pre>
       </div>
-      
+
       <div class="error-actions">
         <a href="/" class="error-btn">
           <span class="icon-[ph--house-bold]"></span>

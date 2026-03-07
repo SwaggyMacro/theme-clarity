@@ -1,0 +1,63 @@
+// ========================================
+// 朋友圈头部样式 (Friends Header)
+// ========================================
+
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// 页面头部
+.friends-header {
+	@include flex(row, center, space-between, $spacing-md);
+	flex-wrap: wrap;
+	margin: $spacing-lg;
+	padding-bottom: $spacing-lg;
+	border-bottom: 1px dashed var(--c-border);
+}
+
+.friends-title {
+	@include flex(row, center, flex-start, $spacing-sm);
+
+	> [class^="icon-"] {
+		font-size: $font-size-2xl;
+		color: var(--c-primary);
+	}
+
+	h1 {
+		margin: 0;
+		font-size: $font-size-2xl;
+	}
+}
+
+.friends-actions {
+	@include flex(row, center, flex-start, $spacing-md);
+}
+
+.friends-count {
+	font-size: $font-size-md;
+	color: var(--c-text-2);
+
+	strong {
+		color: var(--c-primary);
+	}
+}
+
+.apply-link {
+	@include flex(row, center, flex-start, 0.35rem);
+	padding: 0.45em 0.9em;
+	border-radius: $radius-xl;
+	background-color: var(--c-bg-soft);
+	font-size: $font-size-sm;
+	font-weight: 500;
+	color: var(--c-text-2);
+	transition: all $transition-fast;
+
+	[class^="icon-"] {
+		font-size: 1.1em;
+	}
+
+	&:hover {
+		@include gradient-btn;
+		transform: translateY(-1px);
+		box-shadow: 0 2px 8px color-mix(in srgb, var(--c-primary), transparent 60%);
+	}
+}

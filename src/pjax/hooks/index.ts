@@ -42,7 +42,7 @@ export const registerPjaxHooks = () => {
   document.addEventListener("pjax:error", handlePjaxError);
 };
 
-export { updateMetaTags } from "./meta";
+export { updateMetaTags, preloadConditionalStyles } from "./meta";
 export { updateActiveNavItem } from "./navigation";
 export { executeNewScripts } from "./scripts";
 export { getRequestFromPjaxEvent, getMetaKey, isPathMatch } from "./utils";

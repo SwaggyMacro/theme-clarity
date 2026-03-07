@@ -1,0 +1,40 @@
+<th:block th:fragment="moments-head">
+  <link
+    rel="stylesheet"
+    th:if="${pluginFinder.available('PluginMoments')}"
+    data-pjax-conditional="moments"
+    th:href="@{/assets/dist/moments.css?v={version}(version=${theme.spec.version})}"
+  />
+</th:block>
+
+<th:block th:fragment="photos-head">
+  <link
+    rel="stylesheet"
+    data-pjax-conditional="photos"
+    th:href="@{/assets/dist/photos.css?v={version}(version=${theme.spec.version})}"
+  />
+</th:block>
+
+<th:block th:fragment="links-head">
+  <link
+    rel="stylesheet"
+    data-pjax-conditional="links"
+    th:href="@{/assets/dist/links.css?v={version}(version=${theme.spec.version})}"
+  />
+</th:block>
+
+<th:block th:fragment="friends-head">
+  <link
+    rel="stylesheet"
+    data-pjax-conditional="friends"
+    th:href="@{/assets/dist/friends.css?v={version}(version=${theme.spec.version})}"
+  />
+</th:block>
+
+<th:block th:fragment="bangumis-head">
+  <link
+    rel="stylesheet"
+    data-pjax-conditional="bangumis"
+    th:href="@{/assets/dist/bangumis.css?v={version}(version=${theme.spec.version})}"
+  />
+</th:block>
