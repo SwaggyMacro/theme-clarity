@@ -22,8 +22,24 @@ export async function generateQRCode(container: HTMLElement, url: string): Promi
   }
 }
 
-export async function generatePoster(element: HTMLElement, title: string): Promise<void> {
+export async function generatePoster(element: HTMLElement, title: string, defaultCover?: string): Promise<void> {
   const html2canvas = await loadHtml2Canvas();
+
+  // 检查并处理封面图
+  const coverImg = element.querySelector(".poster-cover") as HTMLImageElement;
+  if (coverImg && defaultCover) {
+    const needDefault =
+      !coverImg.src || coverImg.src === window.location.href || !coverImg.complete || coverImg.naturalWidth === 0;
+    if (needDefault) {
+      coverImg.src = defaultCover;
+      await new Promise<void>((resolve) => {
+        coverImg.onload = () => resolve();
+        coverImg.onerror = () => resolve();
+        setTimeout(resolve, 3000);
+      });
+    }
+  }
+
   const canvas = await html2canvas(element, {
     scale: 2,
     useCORS: true,

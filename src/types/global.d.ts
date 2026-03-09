@@ -8,7 +8,7 @@ declare global {
     mountPhotoGallery: (container: HTMLElement, groups: unknown[]) => void;
     mountWeather: (container: HTMLElement, apiKey: string, iconBase: string) => void;
     generateQRCode: (container: HTMLElement, url: string) => Promise<void>;
-    generatePoster: (element: HTMLElement, title: string) => Promise<void>;
+    generatePoster: (element: HTMLElement, title: string, defaultCover?: string) => Promise<void>;
     openShuttle: (options: ShuttleOptions) => void;
     goToPageNumber: (button: HTMLElement) => void;
     themeConfig?: {

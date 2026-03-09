@@ -4,13 +4,15 @@
       const title = /*[[${post.spec.title}]]*/ "";
       const excerpt = /*[[${post.status.excerpt ?: ''}]]*/ "";
       const siteTitle = /*[[${site.title}]]*/ "";
-      const url = window.location.href;
+      const getUrl = () => window.location.href;
+      const defaultPosterCover = /*[[${theme.config?.post?.poster_default}]]*/ "";
 
       // 文字分享
       const shareBtn = document.getElementById("share-btn");
       if (shareBtn) {
-        const shareText = `【${siteTitle}】${title}\n\n${excerpt ? excerpt + "\n\n" : ""}${url}`;
         shareBtn.addEventListener("click", async () => {
+          const url = getUrl();
+          const shareText = `【${siteTitle}】${title}\n\n${excerpt ? excerpt + "\n\n" : ""}${url}`;
           try {
             await navigator.clipboard.writeText(shareText);
             const icon = shareBtn.querySelector("span:first-child");
@@ -56,7 +58,7 @@
 
           // 生成二维码
           if (!qrGenerated && window.generateQRCode) {
-            window.generateQRCode(posterQrcode, url);
+            window.generateQRCode(posterQrcode, getUrl());
             qrGenerated = true;
           }
         });
@@ -80,7 +82,7 @@
 
           try {
             if (window.generatePoster) {
-              await window.generatePoster(posterCard, title);
+              await window.generatePoster(posterCard, title, defaultPosterCover);
               icon.className = "icon-[ph--check-bold]";
               text.textContent = "已保存";
             }

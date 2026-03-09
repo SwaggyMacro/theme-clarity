@@ -1,4 +1,4 @@
-<th:block th:fragment="poster-modal(post, site)">
+<th:block th:fragment="poster-modal(post, site, theme)">
   <div id="poster-modal" class="poster-modal" style="display: none">
     <div class="poster-modal-overlay"></div>
     <div class="poster-modal-content">
@@ -9,8 +9,7 @@
         <div class="poster-card" id="poster-card">
           <div class="poster-header">
             <img
-              th:if="${post.spec.cover}"
-              th:src="${post.spec.cover}"
+              th:src="${post.spec.cover ?: theme.config?.post?.poster_default}"
               class="poster-cover"
               th:alt="${post.spec.title}"
               crossorigin="anonymous"

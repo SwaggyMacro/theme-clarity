@@ -35,7 +35,7 @@
       <span class="icon-[ph--pencil-bold]"></span>
     </button>
     <!-- 文章海报弹窗 -->
-    <th:block th:replace="~{modules/post/poster-modal :: poster-modal(post=${post}, site=${site})}" />
+    <th:block th:replace="~{modules/post/poster-modal :: poster-modal(post=${post}, site=${site}, theme=${theme})}" />
     <!-- 文章脚本 -->
     <th:block th:replace="~{modules/post/script :: script(post=${post}, site=${site}, theme=${theme})}" />
   </th:block>
