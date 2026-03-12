@@ -33,7 +33,7 @@
     </th:block>
 
     <th:block th:unless="${theme.config.development.enabled}">
-      <link rel="stylesheet" th:href="@{/assets/dist/vendor.css?v={version}(version=${theme.spec.version})}" />
+      <link rel="stylesheet" th:href="@{/assets/dist/chinese-fonts.css?v={version}(version=${theme.spec.version})}" />
       <link rel="stylesheet" th:href="@{/assets/dist/main.css?v={version}(version=${theme.spec.version})}" />
       <script type="module" th:src="@{/assets/dist/main.js?v={version}(version=${theme.spec.version})}"></script>
       <link

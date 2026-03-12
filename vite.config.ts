@@ -67,6 +67,12 @@ export default ({ mode }: { mode: string }) => {
               if (id.includes("lodash-es")) return "lodash";
               if (id.includes("preact")) return "preact";
               if (id.includes("@fancyapps")) return "fancybox";
+              if (id.includes("alpinejs") || id.includes("@alpinejs")) return "alpinejs";
+              if (id.includes("twikoo")) return "twikoo";
+              if (id.includes("html2canvas")) return "html2canvas";
+              if (id.includes("qrcode")) return "qrcode";
+              if (id.includes("pjax")) return "pjax";
+              if (id.includes("@chinese-fonts")) return "chinese-fonts";
               return "vendor";
             }
             return undefined;
