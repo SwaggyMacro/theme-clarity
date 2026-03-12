@@ -1,0 +1,61 @@
+<section
+  th:fragment="activity-calendar-widget"
+  class="widget"
+  th:with="
+    calendarTitle=${item.calendar_title ?: '活跃日历'},
+    activityLimit=${T(java.lang.Integer).parseInt((item.activity_limit ?: 240).toString())},
+    postItems=${postFinder.list(1, activityLimit).items},
+    momentItems=${pluginFinder.available('PluginMoments') ? momentFinder.list(1, activityLimit).items : T(java.util.Collections).emptyList()},
+    commentItems=${commentFinder.list(null, 1, activityLimit).items}
+  "
+>
+  <hgroup class="widget-title">
+    <span class="title-text text-creative" th:text="${calendarTitle}">活跃日历</span>
+  </hgroup>
+
+  <div class="widget-body widget-card activity-calendar" data-activity-calendar="true">
+    <div class="activity-calendar-header">
+      <button type="button" class="calendar-nav" data-calendar-nav="prev" aria-label="上个月">
+        <span class="icon-[ph--caret-left-bold]"></span>
+      </button>
+      <div class="calendar-label text-creative" data-calendar-label>--</div>
+      <button type="button" class="calendar-nav" data-calendar-nav="next" aria-label="下个月">
+        <span class="icon-[ph--caret-right-bold]"></span>
+      </button>
+    </div>
+
+    <div class="activity-calendar-weekdays" aria-hidden="true">
+      <span>日</span>
+      <span>一</span>
+      <span>二</span>
+      <span>三</span>
+      <span>四</span>
+      <span>五</span>
+      <span>六</span>
+    </div>
+
+    <div class="activity-calendar-grid" data-calendar-grid role="grid" aria-label="活跃日历"></div>
+
+    <p class="activity-calendar-summary" data-calendar-summary>本月：文章 0 · 瞬间 0 · 评论 0</p>
+    <p class="activity-calendar-hover" data-calendar-hover>悬浮某天可查看当天活跃</p>
+
+    <div class="activity-source" hidden>
+      <span
+        th:each="postItem : ${postItems}"
+        data-activity-type="post"
+        th:data-activity-time="${postItem.spec.publishTime}"
+      ></span>
+      <span
+        th:each="momentItem : ${momentItems}"
+        data-activity-type="moment"
+        th:data-activity-time="${momentItem.spec.releaseTime}"
+      ></span>
+      <span
+        th:each="commentItem : ${commentItems}"
+        th:if="${commentItem.spec.subjectRef != null and (commentItem.spec.subjectRef.kind == 'Post' or commentItem.spec.subjectRef.kind == 'Moment')}"
+        data-activity-type="comment"
+        th:data-activity-time="${commentItem.metadata.creationTimestamp ?: commentItem.spec.creationTime}"
+      ></span>
+    </div>
+  </div>
+</section>

@@ -9,6 +9,7 @@ import { momentsTags } from "./moments-tags";
 import { initMermaid } from "./mermaid";
 import { syncThemeConfig } from "./theme-config";
 import { initTwikooComments } from "../../utils/twikoo";
+import { initActivityCalendar } from "../../utils/activity-calendar";
 
 export { syncThemeConfig } from "./theme-config";
 export { reinitializeAlpineComponents } from "./alpine";
@@ -37,6 +38,7 @@ export const reinitializeComponents = () => {
   }
   mountCustomElements();
   momentsTags();
+  initActivityCalendar();
   syncThemeConfig();
   initMermaid();
   void initTwikooComments();

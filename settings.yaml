@@ -477,6 +477,8 @@ spec:
                       label: 云计算支持
                     - value: "promotion"
                       label: 推广轮播
+                    - value: "activity-calendar"
+                      label: 活跃日历
                     - value: "custom"
                       label: 自定义
                 - $formkit: text
@@ -498,6 +500,20 @@ spec:
                   value: ""
                   help: 当微语无文字时显示的文案，可为空。为空时默认显示“此+{微语标题}+无文字，请点击查看。”
                   if: "$value.widget === 'moments'"
+                - $formkit: text
+                  name: calendar_title
+                  label: 标题
+                  value: "活跃日历"
+                  placeholder: 活跃日历
+                  if: "$value.widget === 'activity-calendar'"
+                - $formkit: number
+                  name: activity_limit
+                  label: 统计条数
+                  value: 240
+                  min: 30
+                  max: 1000
+                  help: 统计最近 N 条文章、瞬间、评论数据，数值越大越完整
+                  if: "$value.widget === 'activity-calendar'"
                 - $formkit: text
                   name: title
                   label: 自定义标题

@@ -31,6 +31,9 @@
         <th:block th:case="'promotion'">
           <th:block th:replace="~{modules/aside-widgets/promotion-widget :: promotion-widget}"></th:block>
         </th:block>
+        <th:block th:case="'activity-calendar'">
+          <th:block th:replace="~{modules/aside-widgets/activity-calendar-widget :: activity-calendar-widget}"></th:block>
+        </th:block>
         <th:block th:case="'custom'">
           <th:block th:replace="~{modules/aside-widgets/custom-widget :: custom-widget(item=${item})}"></th:block>
         </th:block>
