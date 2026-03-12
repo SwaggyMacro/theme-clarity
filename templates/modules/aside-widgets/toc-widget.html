@@ -105,6 +105,26 @@
             li.dataset.id = item.id;
             li.dataset.level = String(item.level || 1);
 
+            const hasChildren = item.children && item.children.length > 0;
+            if (hasChildren) {
+              li.classList.add("toc-collapsed");
+            }
+
+            const wrapper = document.createElement("div");
+            wrapper.className = "toc-item-wrapper";
+
+            if (hasChildren) {
+              const toggle = document.createElement("span");
+              toggle.className = "toc-toggle";
+              toggle.innerHTML = '<span class="icon-[ph--caret-right-bold]"></span>';
+              toggle.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleCollapse(li);
+              };
+              wrapper.appendChild(toggle);
+            }
+
             const a = document.createElement("a");
             a.href = "#" + item.id;
             a.textContent = item.text;
@@ -123,15 +143,138 @@
               }
             };
 
-            li.appendChild(a);
+            wrapper.appendChild(a);
+            li.appendChild(wrapper);
 
             const childrenOl = renderTree(item.children);
             if (childrenOl) {
+              childrenOl.className = "toc-children";
               li.appendChild(childrenOl);
             }
             ol.appendChild(li);
           });
           return ol;
+        }
+
+        function toggleCollapse(li) {
+          if (li.classList.contains("toc-collapsed")) {
+            li.classList.remove("toc-collapsed");
+            li.classList.add("toc-expanded");
+          } else {
+            li.classList.remove("toc-expanded");
+            li.classList.add("toc-collapsed");
+          }
+        }
+
+        function expandLi(li) {
+          li.classList.remove("toc-collapsed");
+          li.classList.add("toc-expanded");
+        }
+
+        function collapseLi(li) {
+          li.classList.remove("toc-expanded");
+          li.classList.add("toc-collapsed");
+        }
+
+        function getAllParentLis(currentLi) {
+          const parents = [];
+          let parent = currentLi.parentElement?.closest("li");
+          while (parent) {
+            parents.push(parent);
+            parent = parent.parentElement?.closest("li");
+          }
+          return parents;
+        }
+
+        function getVisibleHeaderRange() {
+          const viewportTop = window.scrollY + 80;
+          const viewportBottom = window.scrollY + window.innerHeight - 80;
+
+          let firstVisibleId = null;
+          let lastVisibleId = null;
+
+          for (let i = 0; i < headers.length; i++) {
+            const header = headers[i];
+            const top = header.offsetTop;
+            const bottom = top + header.offsetHeight;
+
+            if (top <= viewportBottom && bottom >= viewportTop) {
+              if (firstVisibleId === null) {
+                firstVisibleId = header.id;
+              }
+              lastVisibleId = header.id;
+            }
+          }
+
+          return { firstVisibleId, lastVisibleId };
+        }
+
+        function autoCollapseByViewport() {
+          let { firstVisibleId, lastVisibleId } = getVisibleHeaderRange();
+
+          if (firstVisibleId === null || lastVisibleId === null) {
+            const currentId = resolveCurrentHeadingId();
+            firstVisibleId = currentId;
+            lastVisibleId = currentId;
+          }
+
+          const firstLi = tocItemMap.get(firstVisibleId);
+          const lastLi = tocItemMap.get(lastVisibleId);
+
+          const allParentIds = new Set();
+
+          if (firstLi) {
+            allParentIds.add(firstLi.dataset.id);
+            getAllParentLis(firstLi).forEach((li) => {
+              if (li.dataset.id) allParentIds.add(li.dataset.id);
+            });
+          }
+
+          if (lastLi && lastLi !== firstLi) {
+            allParentIds.add(lastLi.dataset.id);
+            getAllParentLis(lastLi).forEach((li) => {
+              if (li.dataset.id) allParentIds.add(li.dataset.id);
+            });
+          }
+
+          catalogContent.querySelectorAll("li.toc-expanded").forEach((li) => {
+            const id = li.dataset.id;
+            if (!allParentIds.has(id)) {
+              const hasVisibleChildren = hasVisibleChildrenInViewport(li);
+              if (!hasVisibleChildren) {
+                collapseLi(li);
+              }
+            }
+          });
+
+          allParentIds.forEach((id) => {
+            const li = tocItemMap.get(id);
+            if (li && !li.classList.contains("toc-expanded")) {
+              expandLi(li);
+            }
+          });
+        }
+
+        function hasVisibleChildrenInViewport(parentLi) {
+          const children = parentLi.querySelectorAll(":scope > .toc-children > ol > li");
+          if (children.length === 0) return false;
+
+          const viewportTop = window.scrollY + 80;
+          const viewportBottom = window.scrollY + window.innerHeight - 80;
+
+          for (const child of children) {
+            const childId = child.dataset.id;
+            const header = document.getElementById(childId);
+            if (header) {
+              const top = header.offsetTop;
+              const bottom = top + header.offsetHeight;
+              if (top <= viewportBottom && bottom >= viewportTop) {
+                return true;
+              }
+            }
+          }
+
+          return false;
         }
 
         const treeDom = renderTree(root.children);
@@ -174,6 +317,7 @@
           let parent = currentLi.parentElement?.closest("li");
           while (parent) {
             parent.classList.add("has-active");
+            expandLi(parent);
             parent = parent.parentElement?.closest("li");
           }
 
@@ -199,11 +343,14 @@
         }
 
         let rafId = 0;
+        let lastViewportRange = null;
+
         const onScroll = () => {
           if (rafId) return;
           rafId = window.requestAnimationFrame(() => {
             rafId = 0;
             syncActiveByScroll();
+            autoCollapseByViewport();
           });
         };
 
